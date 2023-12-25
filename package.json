@@ -12,9 +12,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-masked-view/masked-view": "^0.3.1",
     "expo": "^49.0.16",
     "react": "18.2.0",
-    "react-native": "npm:react-native-tvos@0.73.0-0"
+    "react-native": "npm:react-native-tvos@0.73.0-0",
+    "react-native-fast-image": "^8.6.3",
+    "react-native-linear-gradient": "^2.8.3"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

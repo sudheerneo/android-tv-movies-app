@@ -1,118 +1,529 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
   View,
+  FlatList,
+  Text,
+  ImageBackground,
+  Linking,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+  StatusBar,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+import FastImage from 'react-native-fast-image';
+import {Platform} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Menus from './src/Menus';
+import Downloads from './src/Downloads';
+import Movies from './src/Movies';
+import trendingMoviesData from './src/testapi/trendingMovies.json';
 
-type SectionProps = PropsWithChildren<{
+interface MovieData {
+  url: string;
   title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
+  thumbnail: string[] | string;
+  torrlinks: {
+    torrName: string;
+    downlink: string;
+  }[];
+  magLinks: string[] | string;
+  updatedOn: string | null;
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+const defImage: string =
+  'https://fastly.picsum.photos/id/609/536/354.jpg?hmac=tVnz1exGJpbwT-2P8MWOvapIg7nTpSQ5SCeUHyu_7mU';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+function App(): React.JSX.Element {
+  const [ready, setReady] = useState<boolean>(false);
+  const [trend, setTrend] = useState<MovieData[]>([]);
+  const [dbDate, setdbDate] = useState<string | null>('');
+  const [tel, setTel] = useState<MovieData[]>([]);
+  const [eng, setEng] = useState<MovieData[]>([]);
+  const [logMessage, setLogMessage] = useState<string>('');
+
+  const [data, setData] = useState<MovieData[]>([]);
+  const [visibleData, setVisibleData] = useState<MovieData[]>([]);
+  const [background, setBackground] = useState<string>(defImage);
+  const [album, setAlbum] = useState<MovieData | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | boolean>(false);
+
+  const [focusMenu, setFocusedMenu] = useState<number | null>(null);
+  const [menu, selectMenu] = useState<number>(0);
+
+  const [focusDownload, setFocusDownload] = useState<number | null>(null);
+  const [download, setDownload] = useState<number | null>(null);
+
+  const [focusThumb, setThumbFocus] = useState<number | null>(null);
+  const [thumb, setThumb] = useState<number | null>(null);
+
+  const Menu = ['Trending', 'Telugu', 'English'];
+
+  const handleOpenTorentClick = async (magnetLink: string) => {
+    Alert.alert(
+      'Stream or Download confirmation',
+      'You link was ready. So you can play, stream or  download...',
+      [
+        {
+          text: 'Hide',
+          onPress: () => console.log('Ask me later pressed'),
+        },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {
+          text: 'open',
+          onPress: () => {
+            console.log('OK Pressed');
+            Linking.openURL(magnetLink);
+          },
+        },
+      ],
+    );
   };
 
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+  const handleLoadMore = () => {
+    const currentLength: number = visibleData.length;
+    const nextData: MovieData[] = data.slice(currentLength, currentLength + 20);
+
+    setVisibleData(prevData => [...prevData, ...nextData]);
+  };
+
+  const renderMenu = ({item, index}: {item: string; index: number}) => (
+    <Menus
+      item={item}
+      index={index}
+      setFocusedMenu={index => setFocusedMenu(index)}
+      setThumbFocus={setThumbFocus}
+      setFocusDownload={setFocusDownload}
+      selectMenu={index => selectMenu(index)}
+      menu={menu}
+      setData={setData}
+      setVisibleData={setVisibleData}
+      setAlbum={setAlbum}
+      setCurrentIndex={setCurrentIndex}
+      data={data}
+      eng={eng}
+      tel={tel}
+      trend={trend}
+      focusDownload={focusDownload}
+      focusMenu={focusMenu}
+    />
   );
+
+  const renderDownLoads = ({item, index}: {item: any; index: number}) => {
+    return (
+      <Downloads
+        item={item}
+        index={index}
+        focusDownload={focusDownload}
+        setFocusDownload={setFocusDownload}
+        setThumbFocus={setThumbFocus}
+        setFocusedMenu={setFocusedMenu}
+        handleOpenTorentClick={handleOpenTorentClick}
+        album={album}
+      />
+    );
+  };
+
+  const renderMovies = ({item, index}: {item: any; index: number}) => {
+    // Replace 'any' with the correct type for item
+    return (
+      <Movies
+        item={item}
+        index={index}
+        setThumbFocus={setThumbFocus}
+        setFocusDownload={setFocusDownload}
+        setFocusedMenu={setFocusedMenu}
+        setAlbum={setAlbum}
+        focusThumb={focusThumb}
+      />
+    );
+  };
+
+  useEffect(() => {
+    const initializeApp = async (trendingMoviesData: MovieData[]) => {
+      setLogMessage(prevLogMessage => prevLogMessage + '\nInitializing App...');
+
+      setTrend(trendingMoviesData);
+      setTel(trendingMoviesData.filter(item => item.title.includes('Tel')));
+      setEng(trendingMoviesData.filter(item => item.title.includes('Eng')));
+
+      setData(trendingMoviesData);
+      setVisibleData(trendingMoviesData.slice(0, 20));
+
+      setBackground(defImage);
+      setAlbum(trendingMoviesData[0]);
+      setCurrentIndex(0);
+      selectMenu(0);
+      setLogMessage(
+        prevLogMessage => prevLogMessage + '\nApp ready.\nlaunching...',
+      );
+
+      setTimeout(() => {
+        setReady(true);
+      }, 5000);
+    };
+
+    const callTrendingAPI = async () => {
+      try {
+        const resp = await fetch(
+          'https://sudheerneo.github.io/json_test_api/trendingMovies.json',
+        );
+        if (resp.ok) {
+          const trendData = await resp.json();
+          setLogMessage(
+            prevLogMessage => prevLogMessage + '\napi requested...',
+          );
+          initializeApp(trendData);
+          setLogMessage(
+            prevLogMessage =>
+              prevLogMessage +
+              '\nData stored successfully\n' +
+              trendData.length +
+              ' links of data gathered...',
+          );
+        } else {
+          console.error('Failed to fetch data:', resp.statusText);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+
+      // initializeApp(trendingMoviesData);
+    };
+    if (trend.length < 1 || !trend || trend === null) {
+      setLogMessage(prevLogMessage => prevLogMessage + '\nData retriving...');
+
+      callTrendingAPI();
+    }
+  }, [trend]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex: number | boolean) =>
+        typeof prevIndex === 'number'
+          ? (prevIndex + 1) % (album?.thumbnail?.length || 1)
+          : 0,
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [album?.thumbnail?.length]);
+
+  if (ready) {
+    return (
+      <ImageBackground
+        resizeMode="cover"
+        source={require('./src/images/bgMesh.jpg')}
+        style={styles.container}>
+        <View style={styles.containerWrapper} />
+
+        {/* hiding status bar */}
+        <StatusBar hidden />
+
+        <FlatList
+          horizontal
+          data={Menu}
+          renderItem={renderMenu}
+          keyExtractor={(item, index) => index.toString()}
+          // extraData={[focusMenu, menu]}
+          keyboardShouldPersistTaps="always"
+          disableVirtualization
+        />
+        {/* preview */}
+        {Platform.isTV ? (
+          // tv code
+          <View style={styles.tvSlideContainer}>
+            <View style={styles.tvslideWrapper}>
+              <ImageBackground
+                source={require('./src/images/NetBlue.png')}
+                style={styles.tvSlideBackground}>
+                <FastImage
+                  source={{
+                    uri:
+                      album?.thumbnail?.length === 0
+                        ? background
+                        : typeof currentIndex === 'number' &&
+                          album?.thumbnail &&
+                          currentIndex >= 0 &&
+                          currentIndex < album.thumbnail.length &&
+                          album.thumbnail[currentIndex] !== null &&
+                          album.thumbnail[currentIndex] !== 'default'
+                        ? album.thumbnail[currentIndex]
+                        : background,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  style={styles.tvSlides}>
+                  <LinearGradient
+                    style={styles.tvSlideGradient}
+                    colors={[
+                      'rgba(0,0,0,0.2)',
+                      'rgba(0,0,0,0.1)',
+                      'rgba(0,0,0,0)',
+                    ]}
+                    start={{x: 0.5, y: 0}}
+                    end={{x: 0.5, y: 1}}
+                  />
+                </FastImage>
+              </ImageBackground>
+            </View>
+            <View style={styles.tvMovieNameContainer}>
+              <Text style={styles.tvMovieName}>
+                {album?.title
+                  .match(/^(.*?\))/)?.[1]
+                  .trim()
+                  .slice(0, 35) || ''}
+              </Text>
+              <View style={styles.tvDownloadContainer}>
+                <FlatList
+                  data={album?.torrlinks.slice(0, 3)}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderDownLoads}
+                  keyboardShouldPersistTaps="always"
+                  disableVirtualization
+                />
+              </View>
+            </View>
+          </View>
+        ) : (
+          // mobile code
+          <View style={styles.slideShowContainer}>
+            <View style={styles.slideShowPadding}>
+              <ImageBackground
+                source={require('./src/images/NetBlue.png')}
+                style={styles.slideShowBackground}>
+                <FastImage
+                  source={{
+                    uri:
+                      album?.thumbnail?.length === 0
+                        ? background
+                        : typeof currentIndex === 'number' &&
+                          currentIndex >= 0 &&
+                          Array.isArray(album?.thumbnail) &&
+                          currentIndex < album?.thumbnail.length
+                        ? album?.thumbnail[currentIndex]
+                        : background,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  style={styles.slideShow}>
+                  <LinearGradient
+                    style={styles.downloadBtnGradient}
+                    colors={[
+                      'rgba(0,0,0,0.2)',
+                      'rgba(0,0,0,0.1)',
+                      'rgba(0,0,0,0)',
+                    ]}
+                    start={{x: 0.5, y: 0}}
+                    end={{x: 0.5, y: 1}}
+                  />
+                </FastImage>
+              </ImageBackground>
+            </View>
+            <View style={{}}>
+              <Text style={styles.movieName}>
+                {album?.title
+                  .match(/^(.*?\))/)?.[1]
+                  .trim()
+                  .slice(0, 35) || ''}
+              </Text>
+              <View style={styles.downloadsContainer}>
+                <FlatList
+                  data={album?.torrlinks.slice(0, 3)}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderDownLoads}
+                  keyboardShouldPersistTaps="always"
+                  disableVirtualization
+                />
+              </View>
+            </View>
+          </View>
+        )}
+        {/* albums */}
+        <View style={styles.movieStatusContainer}>
+          {focusThumb !== null && (
+            <Text style={styles.moviesStatus}>
+              {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length} Total
+              :{data.length},{' Db on : '}
+              {album?.updatedOn &&
+                new Date(album.updatedOn).toLocaleDateString()}
+            </Text>
+          )}
+
+          <FlatList
+            horizontal
+            data={visibleData}
+            renderItem={renderMovies}
+            keyExtractor={(item, index) => index.toString()}
+            extraData={[focusThumb, thumb]}
+            keyboardShouldPersistTaps="always" // <-- Add this line
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            disableVirtualization
+          />
+        </View>
+      </ImageBackground>
+    );
+  } else {
+    return (
+      <ImageBackground
+        resizeMode="cover"
+        source={require('./src/images/splash.jpg')}
+        style={styles.logContainer}>
+        <Text style={styles.logHeading}>Grabbing data from the server</Text>
+        <ActivityIndicator size="large" style={styles.loader} />
+        <Text style={styles.logMessageText} numberOfLines={7}>
+          {logMessage}
+        </Text>
+      </ImageBackground>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    height: '100%',
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    paddingTop:
+      StatusBar.currentHeight !== undefined ? -StatusBar.currentHeight : 0,
+    alignItems: 'center',
+    // backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  containerWrapper: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.8)',
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+
+  /////////////////TV styles ////////////////////////////
+
+  tvSlideContainer: {
+    // backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    position: 'absolute',
+    top: 70,
+    bottom: 180,
+    borderRadius: 15,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
   },
-  highlight: {
-    fontWeight: '700',
+  tvslideWrapper: {width: '50%', padding: 10},
+  tvSlideBackground: {
+    flex: 1,
+    resizeMode: 'contain',
+    borderRadius: 10,
+    overflow: 'hidden',
+    // opacity: 0.9,
+    borderColor: 'rgba(0, 0, 0, .1)',
+    borderWidth: 3,
+  },
+  tvSlides: {
+    flex: 1,
+    margin: -1,
+    borderRadius: 10,
+    borderColor: 'rgba(0,0,0, 0.5)',
+    borderWidth: 5,
+    padding: 10,
+    overflow: 'hidden',
+    // opacity: 0.9,
+  },
+  tvSlideGradient: {
+    // flex: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  tvMovieName: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'white',
+    opacity: 0.8,
+  },
+  tvMovieNameContainer: {width: '50%'},
+  tvDownloadContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  ///////////////// mobile styles ////////////////////////////
+  // slideShowPadding: {padding: 10},
+  slideShowPadding: {paddingVertical: '7%'},
+  slideShowContainer: {
+    // backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    flex: 1,
+    position: 'relative',
+    top: -430,
+    borderRadius: 15,
+    paddingVertical: '10%',
+  },
+  slideShowBackground: {
+    flex: 1,
+    resizeMode: 'contain',
+    borderRadius: 10,
+    overflow: 'hidden',
+    // opacity: 0.9,
+    borderColor: 'rgba(0, 0, 0, .1)',
+    borderWidth: 3,
+  },
+  slideShow: {
+    flex: 1,
+    margin: -1,
+    borderRadius: 10,
+    borderColor: 'rgba(0,0,0, 0.5)',
+    borderWidth: 5,
+    padding: 10,
+    overflow: 'hidden',
+    opacity: 0.9,
+  },
+  downloadBtnGradient: {
+    // flex: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  movieName: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'white',
+    opacity: 0.8,
+    textShadowColor: 'white',
+    textShadowRadius: 2,
+  },
+  downloadsContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  movieStatusContainer: {position: 'absolute', left: 0, bottom: 0},
+  moviesStatus: {
+    textAlign: 'center',
+    margin: Platform.isTV ? 20 : 10,
+    fontSize: 12,
+    color: 'white',
+    marginLeft: Platform.isTV ? '50%' : 0,
+    opacity: 0.5,
+  },
+  logContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  logHeading: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'grey',
+    marginHorizontal: 20,
+    marginTop: 250,
+  },
+  loader: {
+    marginHorizontal: 20,
+    textAlign: 'center',
+  },
+  logMessageText: {
+    textAlign: 'center',
   },
 });
-
 export default App;
