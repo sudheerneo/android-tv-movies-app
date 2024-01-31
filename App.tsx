@@ -182,7 +182,7 @@ function App(): React.JSX.Element {
         console.error('Error:', error);
       }
 
-      initializeApp(trendingMoviesData);
+      // initializeApp(trendingMoviesData);
     };
 
     if (trend.length < 1 || !trend || trend === null) {
