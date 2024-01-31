@@ -1,10 +1,10 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+This is a new [**React Native_TV_OS**](https://github.com/react-native-tvos) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 its basically tv app but works well with mobile too with little ui optimsations
 
 #screenshots
 ![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true)
-![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short1.jpeg?raw=true)
-![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true)
+![screen2](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short1.jpeg?raw=true)
+![screen3](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true)
 
 
 
