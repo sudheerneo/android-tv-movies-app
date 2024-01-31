@@ -28,6 +28,7 @@ interface RenderItemProps {
   setFocusedMenu: React.Dispatch<React.SetStateAction<number | null>>;
   setAlbum: React.Dispatch<React.SetStateAction<MovieData | null>>;
   focusThumb: number | null;
+  setShowLinks: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Movies: React.FC<RenderItemProps> = ({
@@ -38,6 +39,7 @@ const Movies: React.FC<RenderItemProps> = ({
   setFocusedMenu,
   setAlbum,
   focusThumb,
+  setShowLinks,
 }) => (
   <TouchableOpacity
     activeOpacity={1}
@@ -52,14 +54,15 @@ const Movies: React.FC<RenderItemProps> = ({
       setThumbFocus(index),
       setFocusDownload(null),
       setFocusedMenu(null),
-      setAlbum(item)
+      setAlbum(item),
+      setShowLinks(true)
     )}
     style={[
       styles.container,
       {
         borderWidth: focusThumb === index ? 3 : 0,
-        height: 160,
-        width: focusThumb === index ? 110 : 100,
+        height: 200,
+        width: focusThumb === index ? 130 : 120,
       },
     ]}>
     {/* Use ImageBackground for TouchableOpacity's background */}

@@ -8,7 +8,6 @@ import {
   StyleSheet,
   Alert,
   ActivityIndicator,
-  TouchableOpacity,
   StatusBar,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -57,7 +56,6 @@ function App(): React.JSX.Element {
 
   const [focusThumb, setThumbFocus] = useState<number | null>(null);
   const [thumb, setThumb] = useState<number | null>(null);
-  const [showLinks, setShowLinks] = useState<boolean>(false);
 
   const Menu = ['Trending', 'Telugu', 'English'];
 
@@ -141,7 +139,6 @@ function App(): React.JSX.Element {
         setFocusedMenu={setFocusedMenu}
         setAlbum={setAlbum}
         focusThumb={focusThumb}
-        setShowLinks={setShowLinks}
       />
     );
   };
@@ -236,40 +233,64 @@ function App(): React.JSX.Element {
           keyboardShouldPersistTaps="always"
           disableVirtualization
         />
-
-        {focusThumb !== null && (
-          <Text style={styles.moviesStatus}>
-            {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length} Total :
-            {data.length},{' Db on : '}
-            {album?.updatedOn && new Date(album.updatedOn).toLocaleDateString()}
-          </Text>
-        )}
-
-        <FlatList
-          numColumns={3}
-          data={visibleData}
-          renderItem={renderMovies}
-          keyExtractor={(item, index) => index.toString()}
-          extraData={[focusThumb, thumb]}
-          keyboardShouldPersistTaps="always" // <-- Add this line
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          disableVirtualization
-        />
-
         {/* preview */}
-        {showLinks && (
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              zIndex: 1000,
-              backgroundColor: 'black',
-              flex: 1,
-            }}>
+        {Platform.isTV ? (
+          // tv code
+          <View style={styles.tvSlideContainer}>
+            <View style={styles.tvslideWrapper}>
+              <ImageBackground
+                source={require('./src/images/NetBlue.png')}
+                style={styles.tvSlideBackground}>
+                <FastImage
+                  source={{
+                    uri:
+                      album?.thumbnail?.length === 0
+                        ? background
+                        : typeof currentIndex === 'number' &&
+                          album?.thumbnail &&
+                          currentIndex >= 0 &&
+                          currentIndex < album.thumbnail.length &&
+                          album.thumbnail[currentIndex] !== null &&
+                          album.thumbnail[currentIndex] !== 'default'
+                        ? album.thumbnail[currentIndex]
+                        : background,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  style={styles.tvSlides}>
+                  <LinearGradient
+                    style={styles.tvSlideGradient}
+                    colors={[
+                      'rgba(0,0,0,0.2)',
+                      'rgba(0,0,0,0.1)',
+                      'rgba(0,0,0,0)',
+                    ]}
+                    start={{x: 0.5, y: 0}}
+                    end={{x: 0.5, y: 1}}
+                  />
+                </FastImage>
+              </ImageBackground>
+            </View>
+            <View style={styles.tvMovieNameContainer}>
+              <Text style={styles.tvMovieName}>
+                {album?.title
+                  .match(/^(.*?\))/)?.[1]
+                  .trim()
+                  .slice(0, 35) || ''}
+              </Text>
+              <View style={styles.tvDownloadContainer}>
+                <FlatList
+                  data={album?.torrlinks.slice(0, 3)}
+                  keyExtractor={(item, index) => index.toString()}
+                  renderItem={renderDownLoads}
+                  keyboardShouldPersistTaps="always"
+                  disableVirtualization
+                />
+              </View>
+            </View>
+          </View>
+        ) : (
+          // mobile code
+          <View style={styles.slideShowContainer}>
             <View style={styles.slideShowPadding}>
               <ImageBackground
                 source={require('./src/images/NetBlue.png')}
@@ -310,35 +331,39 @@ function App(): React.JSX.Element {
               </Text>
               <View style={styles.downloadsContainer}>
                 <FlatList
-                  data={album?.torrlinks.slice(0, 4)}
+                  data={album?.torrlinks.slice(0, 3)}
                   keyExtractor={(item, index) => index.toString()}
                   renderItem={renderDownLoads}
                   keyboardShouldPersistTaps="always"
                   disableVirtualization
                 />
               </View>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => setShowLinks(false)}>
-                <LinearGradient
-                  colors={['red', 'brown']}
-                  style={{
-                    marginTop: 20,
-                    margin: 10,
-                    borderColor: 'blue',
-                    marginRight: 10,
-                    height: 45,
-                    width: 400,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                  }}>
-                  <Text style={{color: 'white'}}>Close</Text>
-                </LinearGradient>
-              </TouchableOpacity>
             </View>
           </View>
         )}
+        {/* albums */}
+        <View style={styles.movieStatusContainer}>
+          {focusThumb !== null && (
+            <Text style={styles.moviesStatus}>
+              {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length} Total
+              :{data.length},{' Db on : '}
+              {album?.updatedOn &&
+                new Date(album.updatedOn).toLocaleDateString()}
+            </Text>
+          )}
+
+          <FlatList
+            horizontal
+            data={visibleData}
+            renderItem={renderMovies}
+            keyExtractor={(item, index) => index.toString()}
+            extraData={[focusThumb, thumb]}
+            keyboardShouldPersistTaps="always" // <-- Add this line
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            disableVirtualization
+          />
+        </View>
       </ImageBackground>
     );
   } else {
@@ -439,7 +464,7 @@ const styles = StyleSheet.create({
     paddingVertical: '10%',
   },
   slideShowBackground: {
-    height: 400,
+    flex: 1,
     resizeMode: 'contain',
     borderRadius: 10,
     overflow: 'hidden',
