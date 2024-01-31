@@ -14,6 +14,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import FastImage from 'react-native-fast-image';
 import {Platform} from 'react-native';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 import Menus from './src/Menus';
 import Downloads from './src/Downloads';
@@ -36,6 +37,8 @@ const defImage: string =
   'https://fastly.picsum.photos/id/609/536/354.jpg?hmac=tVnz1exGJpbwT-2P8MWOvapIg7nTpSQ5SCeUHyu_7mU';
 
 function App(): React.JSX.Element {
+  const {type, isConnected} = useNetInfo();
+
   const [ready, setReady] = useState<boolean>(false);
   const [trend, setTrend] = useState<MovieData[]>([]);
   const [dbDate, setdbDate] = useState<string | null>('');
@@ -147,8 +150,13 @@ function App(): React.JSX.Element {
   };
 
   useEffect(() => {
+    // console.log(isConnected);
+    Platform.isTV
+      ? console.log(`tv - ${isConnected}`)
+      : console.log(`mobile - ${isConnected}`);
+
     const initializeApp = async (trendingMoviesData: MovieData[]) => {
-      setLogMessage(prevLogMessage => prevLogMessage + '\nInitializing App...');
+      // setLogMessage(prevLogMessage => prevLogMessage + '\nInitializing App...');
 
       setTrend(trendingMoviesData);
       setTel(trendingMoviesData.filter(item => item.title.includes('Tel')));
@@ -161,12 +169,12 @@ function App(): React.JSX.Element {
       setAlbum(trendingMoviesData[0]);
       setCurrentIndex(0);
       selectMenu(0);
-      setLogMessage(
-        prevLogMessage => prevLogMessage + '\nApp ready.\nlaunching...',
-      );
+      // setLogMessage(
+      //   prevLogMessage => prevLogMessage + '\nApp ready.\nlaunching...',
+      // );
 
       setTimeout(() => {
-        setReady(true);
+        // setReady(true);
       }, 5000);
     };
 
@@ -177,17 +185,17 @@ function App(): React.JSX.Element {
         );
         if (resp.ok) {
           const trendData = await resp.json();
-          setLogMessage(
-            prevLogMessage => prevLogMessage + '\napi requested...',
-          );
+          // setLogMessage(
+          //   prevLogMessage => prevLogMessage + '\napi requested...',
+          // );
           initializeApp(trendData);
-          setLogMessage(
-            prevLogMessage =>
-              prevLogMessage +
-              '\nData stored successfully\n' +
-              trendData.length +
-              ' links of data gathered...',
-          );
+          // setLogMessage(
+          //   prevLogMessage =>
+          //     prevLogMessage +
+          //     '\nData stored successfully\n' +
+          //     trendData.length +
+          //     ' links of data gathered...',
+          // );
         } else {
           console.error('Failed to fetch data:', resp.statusText);
         }
@@ -218,128 +226,244 @@ function App(): React.JSX.Element {
 
   if (ready) {
     return (
-      <ImageBackground
-        resizeMode="cover"
-        source={require('./src/images/bgMesh.jpg')}
-        style={styles.container}>
-        <View style={styles.containerWrapper} />
-
-        {/* hiding status bar */}
-        <StatusBar hidden />
-
-        <FlatList
-          horizontal
-          data={Menu}
-          renderItem={renderMenu}
-          keyExtractor={(item, index) => index.toString()}
-          // extraData={[focusMenu, menu]}
-          keyboardShouldPersistTaps="always"
-          disableVirtualization
-        />
-
-        {focusThumb !== null && (
-          <Text style={styles.moviesStatus}>
-            {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length} Total :
-            {data.length},{' Db on : '}
-            {album?.updatedOn && new Date(album.updatedOn).toLocaleDateString()}
-          </Text>
-        )}
-
-        <FlatList
-          numColumns={3}
-          data={visibleData}
-          renderItem={renderMovies}
-          keyExtractor={(item, index) => index.toString()}
-          extraData={[focusThumb, thumb]}
-          keyboardShouldPersistTaps="always" // <-- Add this line
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          disableVirtualization
-        />
-
-        {/* preview */}
-        {showLinks && (
-          <View
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              right: 0,
-              zIndex: 1000,
-              backgroundColor: 'black',
-              flex: 1,
-            }}>
-            <View style={styles.slideShowPadding}>
-              <ImageBackground
-                source={require('./src/images/NetBlue.png')}
-                style={styles.slideShowBackground}>
-                <FastImage
-                  source={{
-                    uri:
-                      album?.thumbnail?.length === 0
-                        ? background
-                        : typeof currentIndex === 'number' &&
-                          currentIndex >= 0 &&
-                          Array.isArray(album?.thumbnail) &&
-                          currentIndex < album?.thumbnail.length
-                        ? album?.thumbnail[currentIndex]
-                        : background,
-                  }}
-                  resizeMode={FastImage.resizeMode.contain}
-                  style={styles.slideShow}>
-                  <LinearGradient
-                    style={styles.downloadBtnGradient}
-                    colors={[
-                      'rgba(0,0,0,0.2)',
-                      'rgba(0,0,0,0.1)',
-                      'rgba(0,0,0,0)',
-                    ]}
-                    start={{x: 0.5, y: 0}}
-                    end={{x: 0.5, y: 1}}
-                  />
-                </FastImage>
-              </ImageBackground>
-            </View>
-            <View style={{}}>
-              <Text style={styles.movieName}>
-                {album?.title
-                  .match(/^(.*?\))/)?.[1]
-                  .trim()
-                  .slice(0, 35) || ''}
-              </Text>
-              <View style={styles.downloadsContainer}>
-                <FlatList
-                  data={album?.torrlinks.slice(0, 4)}
-                  keyExtractor={(item, index) => index.toString()}
-                  renderItem={renderDownLoads}
-                  keyboardShouldPersistTaps="always"
-                  disableVirtualization
-                />
+      <>
+        {/* tvCode */}
+        {Platform.isTV ? (
+          // tvCodeBlock
+          <ImageBackground
+            resizeMode="cover"
+            source={require('./src/images/bgMesh.jpg')}
+            style={styles.container}>
+            <View style={styles.containerWrapper} />
+            {/* //launguage selector */}
+            <FlatList
+              contentContainerStyle={{
+                backgroundColor: 'brown',
+                flexGrow: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 60,
+              }}
+              horizontal
+              data={Menu}
+              renderItem={renderMenu}
+              keyExtractor={(item, index) => index.toString()}
+              // extraData={[focusMenu, menu]}
+              keyboardShouldPersistTaps="always"
+              disableVirtualization
+            />
+            {/* //tvcode preview download links area */}
+            <View style={styles.tvSlideContainer}>
+              <View style={styles.tvslideWrapper}>
+                <ImageBackground
+                  source={require('./src/images/NetBlue.png')}
+                  style={styles.tvSlideBackground}>
+                  <FastImage
+                    source={{
+                      uri:
+                        album?.thumbnail?.length === 0
+                          ? background
+                          : typeof currentIndex === 'number' &&
+                            album?.thumbnail &&
+                            currentIndex >= 0 &&
+                            currentIndex < album.thumbnail.length &&
+                            album.thumbnail[currentIndex] !== null &&
+                            album.thumbnail[currentIndex] !== 'default'
+                          ? album.thumbnail[currentIndex]
+                          : background,
+                    }}
+                    resizeMode={FastImage.resizeMode.contain}
+                    style={styles.tvSlides}>
+                    <LinearGradient
+                      style={styles.tvSlideGradient}
+                      colors={[
+                        'rgba(0,0,0,0.2)',
+                        'rgba(0,0,0,0.1)',
+                        'rgba(0,0,0,0)',
+                      ]}
+                      start={{x: 0.5, y: 0}}
+                      end={{x: 0.5, y: 1}}
+                    />
+                  </FastImage>
+                </ImageBackground>
               </View>
-              <TouchableOpacity
-                activeOpacity={1}
-                onPress={() => setShowLinks(false)}>
-                <LinearGradient
-                  colors={['red', 'brown']}
-                  style={{
-                    marginTop: 20,
-                    margin: 10,
-                    borderColor: 'blue',
-                    marginRight: 10,
-                    height: 45,
-                    width: 400,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    borderRadius: 10,
-                  }}>
-                  <Text style={{color: 'white'}}>Close</Text>
-                </LinearGradient>
-              </TouchableOpacity>
+              <View style={styles.tvMovieNameContainer}>
+                <Text style={styles.tvMovieName}>
+                  {album?.title
+                    .match(/^(.*?\))/)?.[1]
+                    .trim()
+                    .slice(0, 35) || ''}
+                </Text>
+                <View style={styles.tvDownloadContainer}>
+                  <FlatList
+                    data={album?.torrlinks.slice(0, 3)}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={renderDownLoads}
+                    keyboardShouldPersistTaps="always"
+                    disableVirtualization
+                  />
+                </View>
+              </View>
             </View>
-          </View>
+            {/* bottom movie list renderer */}
+            <View style={styles.movieStatusContainer}>
+              {focusThumb !== null && (
+                <Text style={styles.moviesStatus}>
+                  {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length}{' '}
+                  Total :{data.length},{' Db on : '}
+                  {album?.updatedOn &&
+                    new Date(album.updatedOn).toLocaleDateString()}
+                </Text>
+              )}
+
+              <FlatList
+                horizontal
+                data={visibleData}
+                renderItem={renderMovies}
+                keyExtractor={(item, index) => index.toString()}
+                extraData={[focusThumb, thumb]}
+                keyboardShouldPersistTaps="always" // <-- Add this line
+                onEndReached={handleLoadMore}
+                onEndReachedThreshold={0.1}
+                disableVirtualization
+              />
+            </View>
+          </ImageBackground>
+        ) : (
+          // mobileCodeBlock
+          <ImageBackground
+            resizeMode="cover"
+            source={require('./src/images/bgMesh.jpg')}
+            style={styles.container}>
+            <View style={styles.containerWrapper} />
+
+            {/* hiding status bar */}
+            <StatusBar hidden />
+
+            <FlatList
+              horizontal
+              contentContainerStyle={{
+                backgroundColor: 'brown',
+                flexGrow: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: 70,
+                paddingBottom: 8,
+              }}
+              data={Menu}
+              renderItem={renderMenu}
+              keyExtractor={(item, index) => index.toString()}
+              // extraData={[focusMenu, menu]}
+              keyboardShouldPersistTaps="always"
+              disableVirtualization
+            />
+
+            {focusThumb !== null && (
+              <Text style={styles.moviesStatus}>
+                {Menu[menu]} Lists : {focusThumb || 0}/{visibleData.length}{' '}
+                Total :{data.length},{' Db on : '}
+                {album?.updatedOn &&
+                  new Date(album.updatedOn).toLocaleDateString()}
+              </Text>
+            )}
+
+            <FlatList
+              numColumns={3}
+              data={visibleData}
+              renderItem={renderMovies}
+              keyExtractor={(item, index) => index.toString()}
+              extraData={[focusThumb, thumb]}
+              keyboardShouldPersistTaps="always" // <-- Add this line
+              onEndReached={handleLoadMore}
+              onEndReachedThreshold={0.1}
+              disableVirtualization
+            />
+
+            {/* preview */}
+            {showLinks && (
+              <View
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  right: 0,
+                  zIndex: 1000,
+                  backgroundColor: 'black',
+                  flex: 1,
+                }}>
+                <View style={styles.slideShowPadding}>
+                  <ImageBackground
+                    source={require('./src/images/NetBlue.png')}
+                    style={styles.slideShowBackground}>
+                    <FastImage
+                      source={{
+                        uri:
+                          album?.thumbnail?.length === 0
+                            ? background
+                            : typeof currentIndex === 'number' &&
+                              currentIndex >= 0 &&
+                              Array.isArray(album?.thumbnail) &&
+                              currentIndex < album?.thumbnail.length
+                            ? album?.thumbnail[currentIndex]
+                            : background,
+                      }}
+                      resizeMode={FastImage.resizeMode.contain}
+                      style={styles.slideShow}>
+                      <LinearGradient
+                        style={styles.downloadBtnGradient}
+                        colors={[
+                          'rgba(0,0,0,0.2)',
+                          'rgba(0,0,0,0.1)',
+                          'rgba(0,0,0,0)',
+                        ]}
+                        start={{x: 0.5, y: 0}}
+                        end={{x: 0.5, y: 1}}
+                      />
+                    </FastImage>
+                  </ImageBackground>
+                </View>
+                <View style={{}}>
+                  <Text style={styles.movieName}>
+                    {album?.title
+                      .match(/^(.*?\))/)?.[1]
+                      .trim()
+                      .slice(0, 35) || ''}
+                  </Text>
+                  <View style={styles.downloadsContainer}>
+                    <FlatList
+                      data={album?.torrlinks.slice(0, 4)}
+                      keyExtractor={(item, index) => index.toString()}
+                      renderItem={renderDownLoads}
+                      keyboardShouldPersistTaps="always"
+                      disableVirtualization
+                    />
+                  </View>
+                  <TouchableOpacity
+                    activeOpacity={1}
+                    onPress={() => setShowLinks(false)}>
+                    <LinearGradient
+                      colors={['red', 'brown']}
+                      style={{
+                        marginTop: 20,
+                        margin: 10,
+                        borderColor: 'blue',
+                        marginRight: 10,
+                        height: 45,
+                        width: 400,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        borderRadius: 10,
+                      }}>
+                      <Text style={{color: 'white'}}>Close</Text>
+                    </LinearGradient>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            )}
+          </ImageBackground>
         )}
-      </ImageBackground>
+      </>
     );
   } else {
     return (
@@ -347,11 +471,11 @@ function App(): React.JSX.Element {
         resizeMode="cover"
         source={require('./src/images/splash.jpg')}
         style={styles.logContainer}>
-        <Text style={styles.logHeading}>Grabbing data from the server</Text>
+        <Text style={styles.logHeading}>gathering content...</Text>
         <ActivityIndicator size="large" style={styles.loader} />
-        <Text style={styles.logMessageText} numberOfLines={7}>
+        {/* <Text style={styles.logMessageText} numberOfLines={7}>
           {logMessage}
-        </Text>
+        </Text> */}
       </ImageBackground>
     );
   }
@@ -380,8 +504,8 @@ const styles = StyleSheet.create({
   tvSlideContainer: {
     // backgroundColor: 'rgba(255, 255, 255, 0.3)',
     position: 'absolute',
-    top: 70,
-    bottom: 180,
+    top: 55,
+    bottom: 200,
     borderRadius: 15,
     width: '100%',
     justifyContent: 'center',
@@ -404,7 +528,7 @@ const styles = StyleSheet.create({
     margin: -1,
     borderRadius: 10,
     borderColor: 'rgba(0,0,0, 0.5)',
-    borderWidth: 5,
+    borderWidth: 3,
     padding: 10,
     overflow: 'hidden',
     // opacity: 0.9,
@@ -479,7 +603,7 @@ const styles = StyleSheet.create({
   movieStatusContainer: {position: 'absolute', left: 0, bottom: 0},
   moviesStatus: {
     textAlign: 'center',
-    margin: Platform.isTV ? 20 : 10,
+    margin: Platform.isTV ? 2 : 10,
     fontSize: 12,
     color: 'white',
     marginLeft: Platform.isTV ? '50%' : 0,
@@ -491,6 +615,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'grey',
     marginHorizontal: 20,
+    marginVertical: 30,
     marginTop: 250,
   },
   loader: {
