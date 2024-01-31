@@ -150,14 +150,7 @@ function App(): React.JSX.Element {
   };
 
   useEffect(() => {
-    // console.log(isConnected);
-    Platform.isTV
-      ? console.log(`tv - ${isConnected}`)
-      : console.log(`mobile - ${isConnected}`);
-
     const initializeApp = async (trendingMoviesData: MovieData[]) => {
-      // setLogMessage(prevLogMessage => prevLogMessage + '\nInitializing App...');
-
       setTrend(trendingMoviesData);
       setTel(trendingMoviesData.filter(item => item.title.includes('Tel')));
       setEng(trendingMoviesData.filter(item => item.title.includes('Eng')));
@@ -169,12 +162,8 @@ function App(): React.JSX.Element {
       setAlbum(trendingMoviesData[0]);
       setCurrentIndex(0);
       selectMenu(0);
-      // setLogMessage(
-      //   prevLogMessage => prevLogMessage + '\nApp ready.\nlaunching...',
-      // );
-
       setTimeout(() => {
-        // setReady(true);
+        setReady(true);
       }, 5000);
     };
 
@@ -185,17 +174,7 @@ function App(): React.JSX.Element {
         );
         if (resp.ok) {
           const trendData = await resp.json();
-          // setLogMessage(
-          //   prevLogMessage => prevLogMessage + '\napi requested...',
-          // );
           initializeApp(trendData);
-          // setLogMessage(
-          //   prevLogMessage =>
-          //     prevLogMessage +
-          //     '\nData stored successfully\n' +
-          //     trendData.length +
-          //     ' links of data gathered...',
-          // );
         } else {
           console.error('Failed to fetch data:', resp.statusText);
         }
@@ -203,11 +182,10 @@ function App(): React.JSX.Element {
         console.error('Error:', error);
       }
 
-      // initializeApp(trendingMoviesData);
+      initializeApp(trendingMoviesData);
     };
-    if (trend.length < 1 || !trend || trend === null) {
-      setLogMessage(prevLogMessage => prevLogMessage + '\nData retriving...');
 
+    if (trend.length < 1 || !trend || trend === null) {
       callTrendingAPI();
     }
   }, [trend]);
@@ -223,6 +201,21 @@ function App(): React.JSX.Element {
 
     return () => clearInterval(interval);
   }, [album?.thumbnail?.length]);
+
+  const Warning = () => (
+    <ImageBackground
+      resizeMode="cover"
+      source={require('./src/images/splash.jpg')}
+      style={styles.logContainer}>
+      <Text style={styles.logHeading}>gathering content...</Text>
+      <ActivityIndicator size="large" style={styles.loader} />
+      {!isConnected && (
+        <Text style={styles.logMessageText}>
+          You are offline. This app needs Internet to work properly.
+        </Text>
+      )}
+    </ImageBackground>
+  );
 
   if (ready) {
     return (
@@ -463,21 +456,11 @@ function App(): React.JSX.Element {
             )}
           </ImageBackground>
         )}
+        {!isConnected && <Warning />}
       </>
     );
   } else {
-    return (
-      <ImageBackground
-        resizeMode="cover"
-        source={require('./src/images/splash.jpg')}
-        style={styles.logContainer}>
-        <Text style={styles.logHeading}>gathering content...</Text>
-        <ActivityIndicator size="large" style={styles.loader} />
-        {/* <Text style={styles.logMessageText} numberOfLines={7}>
-          {logMessage}
-        </Text> */}
-      </ImageBackground>
-    );
+    return <Warning />;
   }
 }
 
@@ -609,7 +592,17 @@ const styles = StyleSheet.create({
     marginLeft: Platform.isTV ? '50%' : 0,
     opacity: 0.5,
   },
-  logContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  logContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1000,
+  },
   logHeading: {
     fontSize: 30,
     fontWeight: 'bold',
@@ -623,6 +616,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   logMessageText: {
+    marginTop: 20,
     textAlign: 'center',
   },
 });
