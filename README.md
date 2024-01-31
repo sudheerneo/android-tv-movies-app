@@ -1,5 +1,5 @@
 This is a new [**React Native_TV_OS**](https://github.com/react-native-tvos) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
-its basically tv app but works well with mobile too with little ui optimsations
+its basically tv app but works well with mobile too with little ui optimisations
 
 # Mobile screenshots
 ![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true)
