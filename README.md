@@ -3,7 +3,7 @@ its basically tv app but works well with mobile too with little ui optimsations
 
 #screenshots
 ![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true)
-![screen2](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short1.jpeg?raw=true)
+![screen2](https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true)
 ![screen3](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true)
 
 
