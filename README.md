@@ -18,7 +18,7 @@ its basically tv app but works well with mobile too with little ui optimisations
 
 # Test apk
 Use it wisely. its only for educatonal purpose. 
-- Test APK link - [Download](https://github.com/sudheerneo/android-tv-movies-app/app-release.apk)
+- Test APK link - [Download](https://github.com/sudheerneo/android-tv-movies-app/raw/main/app-release.apk)
 
 
 
