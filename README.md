@@ -16,6 +16,10 @@ its basically tv app but works well with mobile too with little ui optimisations
 - download screen
 ![screen3](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true)
 
+# Test apk
+Use it wisely. its only for educatonal purpose. 
+-  test apk - [Download](https://github.com/sudheerneo/android-tv-movies-app/blob/main/app-release.apk?raw=true) 
+
 
 
 
