@@ -13,13 +13,13 @@ its basically tv app but works well with mobile too with little ui optimisations
 # Mobile screenshots
 
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true" width="300"/>
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true" width="273"/>
 </a>
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true" width="300"/>
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true" width="273"/>
 </a>
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true" width="300"/>
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true" width="273"/>
 </a>
 
 # Test apk
