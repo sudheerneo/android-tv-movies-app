@@ -3,9 +3,10 @@ its basically tv app but works well with mobile too with little ui optimisations
 
 # Tv screenshots
 
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" style="margin-right: 6px;">
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true">
   <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" width="407"/>
 </a>
+&nbsp;
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true">
   <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true" width="407"/>
 </a>
