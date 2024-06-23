@@ -2,19 +2,25 @@ This is a new [**React Native_TV_OS**](https://github.com/react-native-tvos) pro
 its basically tv app but works well with mobile too with little ui optimisations
 
 # Tv screenshots
-- Launch screen 
-![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true)
-- Main Movie browser screen 
-![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true)
 
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" width="475"/>
+</a>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true" width="475"/>
+</a>
 
 # Mobile screenshots
-- Launch screen 
-![screen1](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true)
--  Main Movie browser screen 
-![screen2](https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true)
-- download screen
-![screen3](https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true)
+
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.png?raw=true" width="316"/>
+</a>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short1.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short1.png?raw=true" width="316"/>
+</a>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.png?raw=true" width="316"/>
+</a>
 
 # Test apk
 Use it wisely. its only for educatonal purpose. 
