@@ -4,10 +4,10 @@ its basically tv app but works well with mobile too with little ui optimisations
 # Tv screenshots
 
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" width="450"/>
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" width="470"/>
 </a>
 <a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true" width="450"/>
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true" width="470"/>
 </a>
 
 # Mobile screenshots
