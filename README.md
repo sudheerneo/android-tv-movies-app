@@ -3,31 +3,31 @@ its basically tv app but works well with mobile too with little ui optimisations
 
 # Tv screenshots
 
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv0.png?raw=true" width="407"/>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/tv0.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/tv0.png?raw=true" width="407"/>
 </a>
 &nbsp;
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/tv1.png?raw=true" width="407"/>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/tv1.png?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/tv1.png?raw=true" width="407"/>
 </a>
 
 # Mobile screenshots
 
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short0.jpeg?raw=true" width="268"/>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/short0.jpeg?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/short0.jpeg?raw=true" width="268"/>
 </a>
 &nbsp;
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/shot1.jpeg?raw=true" width="268"/>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/shot1.jpeg?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/shot1.jpeg?raw=true" width="268"/>
 </a>
 &nbsp;
-<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true">
-  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/short2.jpeg?raw=true" width="268"/>
+<a href="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/short2.jpeg?raw=true">
+  <img src="https://github.com/sudheerneo/android-tv-movies-app/blob/main/screenshots/short2.jpeg?raw=true" width="268"/>
 </a>
 
 # Test apk
 Use it wisely. its only for educatonal purpose. 
-- Test APK link - [Download](https://github.com/sudheerneo/android-tv-movies-app/raw/main/app-release.apk)
+- Test APK link - [Download](https://github.com/sudheerneo/android-tv-movies-app/raw/main/src/app-release.apk)
 
 
 
